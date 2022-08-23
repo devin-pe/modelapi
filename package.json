@@ -1,7 +1,7 @@
 {
   "name": "modelapi",
   "version": "1.0.0",
-  "description": "API for storing ML models in MongoDB",
+  "description": "Web App for storing ML models in MongoDB",
   "main": "app.js",
   "scripts": {
     "start": "node backend/app.js",
