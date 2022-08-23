@@ -1,15 +1,17 @@
 const fs = require('fs')
 const asyncHandler = require('express-async-handler')
 const upload = require('../config/storage')
-const mlModel = require('../model/ml_models')
+const mlModel = require('../models/ml_model')
 
 // @desc Gets all of the user's models
+// @route GET iNseRt route 
 const getModels = asyncHandler( async (req, res) => {
     const models = await mlModel.find()
     res.status(200).json(models)
 })
 
 // @desc Uploads a user's model
+// @route POST iNseRt route 
 const setModel = asyncHandler( async (req, res) => {
     upload(req, res, (err) => {
         if (err) {
@@ -37,6 +39,7 @@ const setModel = asyncHandler( async (req, res) => {
 )
 
 // @desc Deletes a user's model
+// @route DEL iNseRt route 
 const delModel = asyncHandler( async (req, res) => {
     const model = await mlModel.findById(req.params.id)
     if (!model) {
