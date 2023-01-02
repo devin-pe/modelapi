@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const {getModels, setModel, delModel, createHomepage} = require('../controllers/ml_controller')
+const {protect} = require('../middleware/auth')
+const {getModels, setModel, delModel} = require('../controllers/ml_controller')
 
-router.route('/').get(createHomepage)
-router.route('/get').get(getModels) //change this (GET ALL) and post to same route later
-router.route('/uploads').post(setModel)
-router.route('/:id').delete(delModel)
+router.route('/').get(protect) // Include homepage here
+router.route('/:id').get(protect, getModels).post(protect, setModel).delete(protect, delModel)
+
 module.exports = router

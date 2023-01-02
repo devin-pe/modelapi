@@ -2,8 +2,9 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/user_model')
+
 // @desc Registers a new user
-// @route POST iNseRt route 
+// @route POST /register
 // @access Public
 const registerUser = asyncHandler( async(req, res) => {
     // Validate inputs
@@ -32,29 +33,49 @@ const registerUser = asyncHandler( async(req, res) => {
     })
 
     if(user){
-        res.status(200).json({
+        res.status(201).json({
             _id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            token: generateToken(user._id)
         })
     } else {
         res.status(400)
-        throw new Error('Invalid user input data')
+        throw new Error('Invalid user data')
     }
 })  
 
 // @desc Authenticates a new user
-// @route POST iNseRt route 
+// @route /login
 // @access Public
 const login = asyncHandler( async(req, res) => {
-    res.json({message: 'Login User'})
+    const {email, password} = req.body
+
+    const user = await User.findOne({email})
+    if (user && (await bcrypt.compare(password, user.password))) {
+        res.status(200).json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user._id)
+        })
+    } else {
+        res.status(400)
+        throw new Error('Invalid credentials')
+    }
 })
 
 // @desc Retrieves user data
-// @route GET iNseRt route 
-// @access Public
-const getUser = asyncHandler( async(req, res) => {
+// @route GET /profile
+// @access Private
+const getUser = asyncHandler( async(_, res) => {
     res.json({message: 'User data display'})
 })
+
+// Generate JWT
+const generateToken = (id) =>  {
+    return jwt.sign({id}, process.env.JWT_SECRET, 
+        {expiresIn: '30d'})
+}
 
 module.exports = {registerUser, login, getUser}
